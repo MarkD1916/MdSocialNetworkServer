@@ -13,7 +13,9 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=50, blank=True)
     avatar = models.ImageField(default='avatar_default.png', upload_to='avatars/')
 
-    friends = models.ManyToManyField(User, blank=True, related_name='friends')
+    subscribers = models.ManyToManyField(User, blank=True, related_name='subscribers') #подписчики
+    subscriptions = models.ManyToManyField(User, blank=True, related_name='subscriptions') #подписки
+
     slug = models.SlugField(unique=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -44,9 +46,10 @@ STATUS_CHOICES = (
 class Relationship(models.Model):
     sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='receiver')
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES)
+    #status = models.CharField(max_length=8, choices=STATUS_CHOICES)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-
+    class Meta:
+        unique_together = ('sender', 'receiver',)
     def __str__(self):
-        return f"{self.sender}-{self.receiver}-{self.status}"
+        return f"{self.sender}-{self.receiver}"
