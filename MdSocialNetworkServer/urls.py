@@ -18,16 +18,20 @@ from django.urls import path, include
 from authapp.views import index, restricted
 from post.views import PostViewSet, LikeViewSet
 from userprofile.views import UserProfileViewSet
+
 from rest_framework import routers
+from django.conf.urls.static import static
+from django.conf import settings
 
 router = routers.DefaultRouter()
 router.register(r'post', PostViewSet)
 router.register(r'profile', UserProfileViewSet)
 router.register(r'(?P<post_id>\d+)like', LikeViewSet, basename='Like')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('checkserver/', index, name='index'),
     path('auth/', include('authapp.urls')),
     path('restricted/', restricted, name='restricted'),
     path('api/', include(router.urls)),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
